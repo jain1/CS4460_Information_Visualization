@@ -43,7 +43,6 @@ d3.csv('cereal.csv', function(data) {
         calories[m] = Math.round(sum / brands[m].length);
     }
 
-    console.log(brands);
 
 //**********************************************************************
 //Bar Graph Scales
@@ -81,7 +80,7 @@ d3.csv('cereal.csv', function(data) {
 
     var myChart = d3.select('#chart')
         .append('svg')
-        .style('background', '#E7E0CB')
+        .style('background', '#202020')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
@@ -151,29 +150,46 @@ d3.csv('cereal.csv', function(data) {
     vAxisBar(vGuide)
     vGuide.attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
     vGuide.selectAll('path')
-        .style({fill: 'none', stroke: "#000"})
-    vGuide.selectAll('line')
-        .style({stroke: "#000"})
+        .style({fill: 'white'})
+    vGuide.selectAll('text')
+        .style('font-size','80%')
+        .style('fill', 'white')
+    vGuide.append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -120)
+        .attr("y", -50)
+        .attr("dy", ".71em")
+        .attr("fill", "white")
+        .style("text-anchor", "end")
+        .style('font-weight', 'bold')
+        .style('font-size','130%')
+        .text("Calories");
+
 
 
     var hGuide = d3.select('svg').append('g')
     hAxisBar(hGuide)
     hGuide.attr('transform', 'translate(' + margin.left + ', ' + (height + margin.top) + ')')
     hGuide.selectAll('path')
-        .style({fill: 'none', stroke: "#000"})
-    hGuide.selectAll('line')
-        .style({stroke: "#000"})
+        .style({fill: 'white'})
     hGuide.selectAll('text')
         .text(function (d) {
-            return manu[d];
+
+            if (manu[d].length <= 8) return manu[d];
+            else return (manu[d].substring(0,6) + '..');
         })
+        .style('font-size','80%')
+        .style('fill', 'white')
         //.attr('transform', 'rotate(-45)')
     hGuide.append("text")
         .attr("class", "label")
-        .attr("x", width/2 + 40)
+        .attr("x", width/2 + 60)
         .attr("y", 50)
-        .attr("fill", "black")
+        .attr("fill", "white")
         .style("text-anchor", "end")
+        .style('font-weight', 'bold')
+        .style('font-size', '130%')
         .text("Manufacturer");
 
 //**********************************************************************
@@ -181,7 +197,8 @@ d3.csv('cereal.csv', function(data) {
 //**********************************************************************
     // pre-cursors
     var sizeForCircle = function (d) {
-        return 5*Number(d['Serving Size Weight']);
+        var num = Number(d['Serving Size Weight']);
+        return 20 * num*num*(num/3);
     }
 
     // setup x
@@ -227,7 +244,7 @@ d3.csv('cereal.csv', function(data) {
 
     // add the graph canvas to the body of the webpage
     var svg = d3.select('#chart').append("svg")
-        .style('background', '#E7E0CB')
+        .style('background', '#202020')
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -241,32 +258,45 @@ d3.csv('cereal.csv', function(data) {
         .style('opacity', 0)
 
     // x-axis
-    svg.append("g")
+    var plotXAxis = svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
         .attr("fill", "white")
         .call(xAxis)
-        .append("text")
+        plotXAxis.selectAll('text')
+            .style('font-size','80%')
+            .style('fill', 'white')
+        plotXAxis.append("text")
             .attr("class", "label")
-            .attr("x", width/2)
-            .attr("y", 40)
+            .attr("x", width/2 + 25)
+            .attr("y", 50)
             .attr("fill", "white")
             .style("text-anchor", "end")
+            .style('font-weight', 'bold')
+            .style('font-size', '130%')
             .text("Sugars");
 
     // y-axis
-    svg.append("g")
+    var plotYAxis = svg.append("g")
         .attr("class", "y axis")
         .attr("fill", "white")
         .call(yAxis)
-        .append("text")
-            .attr("class", "label")
+        plotYAxis.selectAll('text')
+            .style('font-size','80%')
+            .style('fill', 'white')
+        plotYAxis.append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", 6)
+            .attr("x", -120)
+            .attr("y", -50)
+            .style('font-weight', 'bold')
+            .style('font-size','130%')
             .attr("dy", ".71em")
             .attr("fill", "white")
             .style("text-anchor", "end")
             .text("Calories");
+
+
+
 
     var plot = svg.selectAll(".dot")
         .data(data)
@@ -297,7 +327,6 @@ d3.csv('cereal.csv', function(data) {
                 var current = Number(d.Calories);
                 d3.select('#chart').select('svg').selectAll('rect').transition()
                     .style('fill', function(f){
-                        console.log(f);
                         if (f > current) return 'red';
                         else return color;
                     })
@@ -321,21 +350,22 @@ d3.csv('cereal.csv', function(data) {
         .data(scatterColor.domain())
         .enter().append("g")
             .attr("class", "legend")
-            .attr("transform", function(d, i) { return "translate(0," + (i * 20 + 165) + ")"; });
+            .attr("transform", function(d, i) { return "translate(0," + (i * 15 + 195) + ")"; });
 
     // draw legend colored rectangles
     legend.append("rect")
-        .attr("x", width - 18)
-        .attr("width", 18)
-        .attr("height", 18)
+        .attr("x", width - 13)
+        .attr("width", 13)
+        .attr("height", 13)
         .style("fill", scatterColor);
 
     // draw legend text
     legend.append("text")
-        .attr("x", width - 24)
-        .attr("y", 9)
+        .attr("x", width - 20)
+        .attr("y", 6.5)
         .attr("dy", ".35em")
         .attr("fill", "white")
+        .style('font-size','80%')
         .style("text-anchor", "end")
         .text(function(d) { return d;});
 
